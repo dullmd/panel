@@ -17,90 +17,154 @@ app.use(helmet({
 }));
 app.use(cors());
 app.use(compression());
-app.use(express.json({ limit: '10mb' }));
+app.use(express.json({ limit: '50mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Rate limiting - prevents abuse
+// Rate limiting
 const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100, // limit each IP to 100 requests per windowMs
-    message: 'Too many requests from this IP, please try again later.'
+    windowMs: 15 * 60 * 1000,
+    max: 200,
+    message: 'Too many requests, please try again later.'
 });
 app.use('/api/', limiter);
 
-// MongoDB Connection with retry logic
-let db;
+// MongoDB Connection Pool
+let mongoClient = null;
+let db = null;
 let isConnected = false;
 
-const connectToMongoDB = async () => {
+// Connect to MongoDB with custom URL
+app.post('/api/connect', async (req, res) => {
     try {
-        const client = new MongoClient(process.env.MONGODB_URL, {
+        const { url, database } = req.body;
+        
+        if (!url) {
+            return res.status(400).json({ error: 'MongoDB URL is required' });
+        }
+
+        // Close existing connection if any
+        if (mongoClient) {
+            await mongoClient.close();
+        }
+
+        // Connect to new database
+        mongoClient = new MongoClient(url, {
             maxPoolSize: 10,
             minPoolSize: 2,
             retryWrites: true,
             retryReads: true,
+            connectTimeoutMS: 10000,
+            serverSelectionTimeoutMS: 10000
         });
+
+        await mongoClient.connect();
         
-        await client.connect();
-        db = client.db('sila_bot_db'); // Bot database name
+        // Get database name from URL or use provided one
+        let dbName = database;
+        if (!dbName) {
+            // Extract from URL
+            const urlObj = new URL(url);
+            dbName = urlObj.pathname.replace('/', '') || 'test';
+        }
+        
+        db = mongoClient.db(dbName);
         isConnected = true;
-        console.log('✅ SILA MINI BOT connected to MongoDB successfully');
-        console.log(`📊 Database: sila_bot_db`);
-        console.log(`🚀 Server running on port ${PORT}`);
-        console.log(`🌐 Open http://localhost:${PORT} in your browser`);
+
+        // Test connection and get basic info
+        const admin = db.admin();
+        const serverInfo = await admin.serverInfo();
+        const dbStats = await db.stats();
+
+        res.json({
+            success: true,
+            message: 'Connected successfully',
+            database: dbName,
+            version: serverInfo.version,
+            stats: {
+                collections: dbStats.collections || 0,
+                objects: dbStats.objects || 0,
+                dataSize: dbStats.dataSize || 0
+            }
+        });
+
     } catch (error) {
-        console.error('❌ MongoDB connection error:', error);
         isConnected = false;
-        // Retry after 5 seconds
-        setTimeout(connectToMongoDB, 5000);
+        console.error('Connection error:', error);
+        res.status(500).json({ 
+            error: 'Connection failed', 
+            details: error.message 
+        });
     }
-};
+});
 
-connectToMongoDB();
+// Get database info
+app.get('/api/info', async (req, res) => {
+    try {
+        if (!isConnected || !db) {
+            return res.status(503).json({ error: 'Not connected to any database' });
+        }
 
-// API Health Check
-app.get('/api/health', (req, res) => {
-    res.json({
-        status: isConnected ? 'connected' : 'disconnected',
-        timestamp: new Date().toISOString(),
-        bot: 'SILA MINI BOT',
-        version: '2026.1.0'
-    });
+        const stats = await db.stats();
+        const collections = await db.listCollections().toArray();
+        
+        const collectionsData = await Promise.all(
+            collections.map(async (col) => {
+                const count = await db.collection(col.name).countDocuments();
+                const sample = await db.collection(col.name).find().limit(1).toArray();
+                return {
+                    name: col.name,
+                    count,
+                    sample: sample[0] || null
+                };
+            })
+        );
+
+        res.json({
+            connected: true,
+            database: db.databaseName,
+            stats: {
+                collections: stats.collections,
+                documents: stats.objects,
+                dataSize: stats.dataSize,
+                avgObjSize: stats.avgObjSize
+            },
+            collections: collectionsData
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 });
 
 // Get all collections
 app.get('/api/collections', async (req, res) => {
     try {
-        if (!isConnected) {
-            return res.status(503).json({ error: 'Database not connected' });
+        if (!isConnected || !db) {
+            return res.status(503).json({ error: 'Not connected to any database' });
         }
         
         const collections = await db.listCollections().toArray();
-        const collectionNames = collections.map(c => c.name);
-        
-        // Get document counts for each collection
         const collectionsWithStats = await Promise.all(
-            collectionNames.map(async (name) => {
-                const count = await db.collection(name).countDocuments();
+            collections.map(async (c) => {
+                const count = await db.collection(c.name).countDocuments();
                 return {
-                    name,
-                    documentCount: count
+                    name: c.name,
+                    documentCount: count,
+                    type: c.type || 'collection'
                 };
             })
         );
         
         res.json(collectionsWithStats);
     } catch (error) {
-        console.error('Error fetching collections:', error);
         res.status(500).json({ error: error.message });
     }
 });
 
-// Get documents from a collection with filtering and sorting
+// Get documents from collection with advanced filtering
 app.get('/api/collections/:collectionName', async (req, res) => {
     try {
-        if (!isConnected) {
-            return res.status(503).json({ error: 'Database not connected' });
+        if (!isConnected || !db) {
+            return res.status(503).json({ error: 'Not connected to any database' });
         }
         
         const { collectionName } = req.params;
@@ -119,12 +183,22 @@ app.get('/api/collections/:collectionName', async (req, res) => {
         // Build query
         let query = {};
         if (search) {
+            // Try to search in common fields
+            const searchRegex = new RegExp(search, 'i');
             query = {
                 $or: [
-                    { userId: { $regex: search, $options: 'i' } },
-                    { chatId: { $regex: search, $options: 'i' } },
-                    { sessionId: { $regex: search, $options: 'i' } },
-                    { username: { $regex: search, $options: 'i' } }
+                    { _id: searchRegex },
+                    { userId: searchRegex },
+                    { user_id: searchRegex },
+                    { username: searchRegex },
+                    { user_name: searchRegex },
+                    { chatId: searchRegex },
+                    { chat_id: searchRegex },
+                    { sessionId: searchRegex },
+                    { session_id: searchRegex },
+                    { phoneNumber: searchRegex },
+                    { phone: searchRegex },
+                    { email: searchRegex }
                 ]
             };
         }
@@ -149,8 +223,15 @@ app.get('/api/collections/:collectionName', async (req, res) => {
         // Get collection stats
         const stats = await collection.stats();
         
+        // Get field types for better display
+        const fields = new Set();
+        documents.forEach(doc => {
+            Object.keys(doc).forEach(key => fields.add(key));
+        });
+        
         res.json({
             documents,
+            fields: Array.from(fields),
             pagination: {
                 currentPage: parseInt(page),
                 totalPages: Math.ceil(total / limit),
@@ -163,7 +244,8 @@ app.get('/api/collections/:collectionName', async (req, res) => {
                 name: collectionName,
                 size: stats.size,
                 count: stats.count,
-                avgObjSize: stats.avgObjSize
+                avgObjSize: stats.avgObjSize,
+                totalIndexSize: stats.totalIndexSize
             }
         });
     } catch (error) {
@@ -172,17 +254,27 @@ app.get('/api/collections/:collectionName', async (req, res) => {
     }
 });
 
-// Get single document by ID
+// Get single document
 app.get('/api/collections/:collectionName/:id', async (req, res) => {
     try {
         const { collectionName, id } = req.params;
         const collection = db.collection(collectionName);
         
         let document;
+        // Try different ID formats
         if (ObjectId.isValid(id)) {
             document = await collection.findOne({ _id: new ObjectId(id) });
-        } else {
-            document = await collection.findOne({ sessionId: id });
+        }
+        
+        if (!document) {
+            document = await collection.findOne({ 
+                $or: [
+                    { sessionId: id },
+                    { userId: id },
+                    { chatId: id },
+                    { _id: id }
+                ]
+            });
         }
         
         if (!document) {
@@ -191,7 +283,6 @@ app.get('/api/collections/:collectionName/:id', async (req, res) => {
         
         res.json(document);
     } catch (error) {
-        console.error('Error fetching document:', error);
         res.status(500).json({ error: error.message });
     }
 });
@@ -207,6 +298,7 @@ app.put('/api/collections/:collectionName/:id', async (req, res) => {
         const collection = db.collection(collectionName);
         
         let result;
+        // Try different ID formats
         if (ObjectId.isValid(id)) {
             result = await collection.updateOne(
                 { _id: new ObjectId(id) },
@@ -214,7 +306,11 @@ app.put('/api/collections/:collectionName/:id', async (req, res) => {
             );
         } else {
             result = await collection.updateOne(
-                { sessionId: id },
+                { $or: [
+                    { sessionId: id },
+                    { userId: id },
+                    { chatId: id }
+                ]},
                 { $set: { ...updates, updatedAt: new Date() } }
             );
         }
@@ -223,18 +319,12 @@ app.put('/api/collections/:collectionName/:id', async (req, res) => {
             return res.status(404).json({ error: 'Document not found' });
         }
         
-        // Get updated document
-        const updatedDoc = await collection.findOne(
-            ObjectId.isValid(id) ? { _id: new ObjectId(id) } : { sessionId: id }
-        );
-        
         res.json({
             success: true,
             message: 'Document updated successfully',
-            document: updatedDoc
+            modifiedCount: result.modifiedCount
         });
     } catch (error) {
-        console.error('Error updating document:', error);
         res.status(500).json({ error: error.message });
     }
 });
@@ -249,15 +339,18 @@ app.delete('/api/collections/:collectionName/:id', async (req, res) => {
         if (ObjectId.isValid(id)) {
             result = await collection.deleteOne({ _id: new ObjectId(id) });
         } else {
-            result = await collection.deleteOne({ sessionId: id });
+            result = await collection.deleteOne({ 
+                $or: [
+                    { sessionId: id },
+                    { userId: id },
+                    { chatId: id }
+                ]
+            });
         }
         
         if (result.deletedCount === 0) {
             return res.status(404).json({ error: 'Document not found' });
         }
-        
-        // Emit delete event (for realtime updates)
-        // You can implement WebSocket here if needed
         
         res.json({
             success: true,
@@ -265,7 +358,6 @@ app.delete('/api/collections/:collectionName/:id', async (req, res) => {
             deletedCount: result.deletedCount
         });
     } catch (error) {
-        console.error('Error deleting document:', error);
         res.status(500).json({ error: error.message });
     }
 });
@@ -284,16 +376,16 @@ app.post('/api/collections/:collectionName/bulk-delete', async (req, res) => {
         
         // Convert string IDs to ObjectId where valid
         const objectIds = ids.map(id => {
-            if (ObjectId.isValid(id)) {
-                return new ObjectId(id);
-            }
+            if (ObjectId.isValid(id)) return new ObjectId(id);
             return id;
         });
         
         const result = await collection.deleteMany({
             $or: [
                 { _id: { $in: objectIds.filter(id => id instanceof ObjectId) } },
-                { sessionId: { $in: objectIds.filter(id => typeof id === 'string') } }
+                { sessionId: { $in: objectIds.filter(id => typeof id === 'string') } },
+                { userId: { $in: objectIds.filter(id => typeof id === 'string') } },
+                { chatId: { $in: objectIds.filter(id => typeof id === 'string') } }
             ]
         });
         
@@ -303,62 +395,21 @@ app.post('/api/collections/:collectionName/bulk-delete', async (req, res) => {
             deletedCount: result.deletedCount
         });
     } catch (error) {
-        console.error('Error in bulk delete:', error);
         res.status(500).json({ error: error.message });
     }
 });
 
-// Delete old sessions
-app.delete('/api/collections/:collectionName/clean-old', async (req, res) => {
+// Disconnect
+app.post('/api/disconnect', async (req, res) => {
     try {
-        const { collectionName } = req.params;
-        const { days = 7, dateField = 'lastActive' } = req.query;
-        
-        const collection = db.collection(collectionName);
-        const cutoffDate = new Date();
-        cutoffDate.setDate(cutoffDate.getDate() - parseInt(days));
-        
-        const result = await collection.deleteMany({
-            [dateField]: { $lt: cutoffDate }
-        });
-        
-        res.json({
-            success: true,
-            message: `Deleted ${result.deletedCount} old sessions (older than ${days} days)`,
-            deletedCount: result.deletedCount
-        });
+        if (mongoClient) {
+            await mongoClient.close();
+            mongoClient = null;
+            db = null;
+            isConnected = false;
+        }
+        res.json({ success: true, message: 'Disconnected successfully' });
     } catch (error) {
-        console.error('Error cleaning old sessions:', error);
-        res.status(500).json({ error: error.message });
-    }
-});
-
-// Get database stats
-app.get('/api/stats', async (req, res) => {
-    try {
-        const stats = await db.stats();
-        const collections = await db.listCollections().toArray();
-        
-        const collectionsData = await Promise.all(
-            collections.map(async (col) => {
-                const count = await db.collection(col.name).countDocuments();
-                return {
-                    name: col.name,
-                    count
-                };
-            })
-        );
-        
-        res.json({
-            database: 'sila_bot_db',
-            totalCollections: collections.length,
-            totalDocuments: stats.objects,
-            totalSize: stats.dataSize,
-            collections: collectionsData,
-            timestamp: new Date().toISOString()
-        });
-    } catch (error) {
-        console.error('Error getting stats:', error);
         res.status(500).json({ error: error.message });
     }
 });
@@ -380,6 +431,6 @@ app.use((req, res) => {
 app.listen(PORT, () => {
     console.log(`\n🚀 SILA MINI BOT Manager v2026`);
     console.log(`📡 Server: http://localhost:${PORT}`);
-    console.log(`💾 Database: MongoDB Atlas`);
+    console.log(`💾 Database: Ready to connect`);
     console.log(`✨ Status: Premium Edition\n`);
 });
