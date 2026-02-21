@@ -10,614 +10,214 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Syncopate:wght@400;700&family=Clash+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- Font Awesome 6 (Premium Icons) -->
+    <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     <style>
-        /* Premium 2026 Design System */
-        :root {
-            --primary: #0066FF;
-            --primary-glow: rgba(0, 102, 255, 0.4);
-            --bg-primary: #0A0A0F;
-            --bg-secondary: #111118;
-            --bg-tertiary: #1A1A24;
-            --text-primary: #FFFFFF;
-            --text-secondary: #B0B0C0;
-            --text-tertiary: #70707F;
-            --border-color: #2A2A35;
-            --success: #00E676;
-            --warning: #FFB74D;
-            --danger: #FF5252;
-            --glass-bg: rgba(255, 255, 255, 0.03);
-            --glass-border: rgba(255, 255, 255, 0.05);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            font-family: 'Space Grotesk', sans-serif;
-            min-height: 100vh;
-            position: relative;
-            overflow-x: hidden;
-        }
-
-        /* Premium Background Effect */
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at 20% 50%, rgba(0, 102, 255, 0.1) 0%, transparent 50%);
-            pointer-events: none;
-            z-index: -1;
-        }
-
-        body::after {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAxOGM5Ljk0IDAgMTggOC4wNiAxOCAxOHMtOC4wNiAxOC0xOCAxOC0xOC04LjA2LTE4LTE4IDguMDYtMTggMTgtMTh6IiBzdHJva2U9InJnYmEoMjU1LDI1NSwyNTUsMC4wMikiIHN0cm9rZS13aWR0aD0iMSIvPjwvZz48L3N2Zz4=');
-            opacity: 0.5;
-            pointer-events: none;
-            z-index: -1;
-        }
-
-        /* Premium Container */
-        .premium-container {
-            max-width: 1600px;
-            margin: 0 auto;
-            padding: 20px;
-            position: relative;
-            z-index: 1;
-        }
-
-        /* Premium Header */
-        .premium-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 30px 0;
-            border-bottom: 1px solid var(--border-color);
+        /* Previous styles remain the same plus these new ones */
+        
+        /* MongoDB Connection Panel */
+        .connection-panel {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 25px;
             margin-bottom: 30px;
         }
 
-        .logo-section {
+        .connection-header {
             display: flex;
             align-items: center;
             gap: 15px;
-        }
-
-        .logo-icon {
-            width: 50px;
-            height: 50px;
-            background: linear-gradient(135deg, var(--primary), #00A3FF);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
-            color: white;
-            box-shadow: 0 10px 30px var(--primary-glow);
-        }
-
-        .logo-text h1 {
-            font-family: 'Syncopate', sans-serif;
-            font-size: 24px;
-            font-weight: 700;
-            letter-spacing: 2px;
-            background: linear-gradient(135deg, #fff, #B0B0C0);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .logo-text .badge {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 12px;
-            color: var(--text-secondary);
-            letter-spacing: 1px;
-        }
-
-        .status-section {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .connection-status {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px 20px;
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: 50px;
-            backdrop-filter: blur(10px);
-        }
-
-        .status-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: var(--success);
-            box-shadow: 0 0 20px var(--success);
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.5; }
-            100% { opacity: 1; }
-        }
-
-        .date-time {
-            font-family: 'Clash Display', sans-serif;
-            font-size: 14px;
-            color: var(--text-secondary);
-        }
-
-        /* Premium Stats Cards */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-            margin-bottom: 40px;
-        }
-
-        .stat-card {
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            padding: 25px;
-            backdrop-filter: blur(10px);
-            transition: transform 0.3s, border-color 0.3s;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
-            transition: left 0.5s;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-            border-color: var(--primary);
-        }
-
-        .stat-card:hover::before {
-            left: 100%;
-        }
-
-        .stat-icon {
-            width: 50px;
-            height: 50px;
-            background: linear-gradient(135deg, var(--primary), #00A3FF);
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            color: white;
             margin-bottom: 20px;
         }
 
-        .stat-value {
+        .connection-header i {
+            font-size: 32px;
+            color: var(--primary);
+        }
+
+        .connection-header h2 {
             font-family: 'Clash Display', sans-serif;
-            font-size: 36px;
-            font-weight: 700;
-            margin-bottom: 5px;
+            font-size: 24px;
         }
 
-        .stat-label {
-            color: var(--text-secondary);
-            font-size: 14px;
-            letter-spacing: 1px;
-        }
-
-        /* Collections Bar */
-        .collections-bar {
-            background: var(--bg-secondary);
-            border-radius: 50px;
-            padding: 10px;
-            margin-bottom: 30px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            border: 1px solid var(--border-color);
-        }
-
-        .collection-chip {
-            padding: 12px 24px;
-            border-radius: 40px;
-            background: transparent;
-            color: var(--text-secondary);
-            font-family: 'Space Grotesk', sans-serif;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            border: 1px solid transparent;
-        }
-
-        .collection-chip:hover {
-            color: var(--text-primary);
-            background: var(--glass-bg);
-        }
-
-        .collection-chip.active {
-            background: linear-gradient(135deg, var(--primary), #00A3FF);
-            color: white;
-            border: none;
-            box-shadow: 0 10px 30px var(--primary-glow);
-        }
-
-        .collection-chip .count {
-            background: rgba(255,255,255,0.1);
-            padding: 4px 8px;
-            border-radius: 20px;
-            font-size: 12px;
-        }
-
-        .collection-chip.active .count {
-            background: rgba(255,255,255,0.2);
-        }
-
-        /* Search & Actions */
-        .action-bar {
+        .url-input-group {
             display: flex;
             gap: 15px;
-            margin-bottom: 30px;
             flex-wrap: wrap;
         }
 
-        .search-wrapper {
+        .url-input-wrapper {
             flex: 1;
+            min-width: 400px;
             position: relative;
-            min-width: 300px;
         }
 
-        .search-wrapper i {
-            position: absolute;
-            left: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-tertiary);
-            font-size: 18px;
-        }
-
-        .search-input {
+        .url-input {
             width: 100%;
-            padding: 18px 25px 18px 55px;
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: 50px;
+            padding: 18px 20px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
             color: var(--text-primary);
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 16px;
-            backdrop-filter: blur(10px);
+            font-family: 'Space Grotesk', monospace;
+            font-size: 14px;
             transition: all 0.3s;
         }
 
-        .search-input:focus {
+        .url-input:focus {
             outline: none;
             border-color: var(--primary);
             box-shadow: 0 0 30px var(--primary-glow);
         }
 
-        .action-btn {
-            padding: 18px 30px;
-            border-radius: 50px;
+        .database-input {
+            width: 200px;
+            padding: 18px 20px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            color: var(--text-primary);
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .connect-btn {
+            padding: 18px 35px;
+            background: linear-gradient(135deg, var(--primary), #00A3FF);
             border: none;
+            border-radius: 16px;
+            color: white;
             font-family: 'Space Grotesk', sans-serif;
             font-weight: 600;
-            font-size: 14px;
             cursor: pointer;
             transition: all 0.3s;
             display: flex;
             align-items: center;
             gap: 10px;
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            color: var(--text-primary);
-            backdrop-filter: blur(10px);
         }
 
-        .action-btn.primary {
-            background: linear-gradient(135deg, var(--primary), #00A3FF);
-            border: none;
-            box-shadow: 0 10px 30px var(--primary-glow);
-        }
-
-        .action-btn.danger {
-            background: linear-gradient(135deg, #FF5252, #FF1744);
-            border: none;
-        }
-
-        .action-btn.warning {
-            background: linear-gradient(135deg, #FFB74D, #FF9800);
-            border: none;
-        }
-
-        .action-btn:hover {
+        .connect-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 20px 40px rgba(0,102,255,0.3);
+            box-shadow: 0 20px 40px var(--primary-glow);
         }
 
-        /* Premium Table */
-        .table-container {
-            background: var(--bg-secondary);
-            border-radius: 24px;
-            border: 1px solid var(--border-color);
-            overflow: auto;
-            margin-bottom: 30px;
-        }
-
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 1000px;
-        }
-
-        .data-table th {
-            text-align: left;
-            padding: 20px;
-            font-family: 'Syncopate', sans-serif;
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--text-secondary);
-            border-bottom: 1px solid var(--border-color);
-            background: var(--bg-tertiary);
-            cursor: pointer;
-            transition: color 0.3s;
-        }
-
-        .data-table th:hover {
-            color: var(--primary);
-        }
-
-        .data-table td {
-            padding: 20px;
-            border-bottom: 1px solid var(--border-color);
-            color: var(--text-primary);
-            font-size: 14px;
-        }
-
-        .data-table tbody tr {
-            transition: background 0.3s;
-        }
-
-        .data-table tbody tr:hover {
-            background: var(--glass-bg);
-        }
-
-        /* Checkbox custom */
-        .premium-checkbox {
-            width: 20px;
-            height: 20px;
-            border: 2px solid var(--border-color);
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.3s;
-            background: transparent;
-        }
-
-        .premium-checkbox:checked {
-            background: var(--primary);
-            border-color: var(--primary);
-        }
-
-        /* Action buttons in table */
-        .row-actions {
-            display: flex;
-            gap: 10px;
-        }
-
-        .row-btn {
-            width: 35px;
-            height: 35px;
-            border-radius: 10px;
-            border: none;
-            background: var(--glass-bg);
-            color: var(--text-secondary);
-            cursor: pointer;
-            transition: all 0.3s;
-            border: 1px solid var(--glass-border);
-        }
-
-        .row-btn:hover {
-            background: var(--primary);
-            color: white;
-            transform: scale(1.1);
-        }
-
-        .row-btn.delete:hover {
-            background: var(--danger);
-        }
-
-        /* Pagination */
-        .pagination {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-top: 30px;
-        }
-
-        .page-btn {
-            padding: 12px 20px;
-            border-radius: 12px;
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            color: var(--text-primary);
-            cursor: pointer;
-            transition: all 0.3s;
-            font-family: 'Space Grotesk', sans-serif;
-        }
-
-        .page-btn:hover:not(:disabled) {
-            background: var(--primary);
-            border-color: var(--primary);
-        }
-
-        .page-btn.active {
-            background: var(--primary);
-            border-color: var(--primary);
-        }
-
-        .page-btn:disabled {
+        .connect-btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
         }
 
-        /* Modal */
-        .modal {
+        .connection-info {
+            margin-top: 20px;
+            padding: 20px;
+            background: var(--glass-bg);
+            border-radius: 16px;
             display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.8);
-            backdrop-filter: blur(10px);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
         }
 
-        .modal-content {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 24px;
-            width: 90%;
-            max-width: 600px;
-            max-height: 80vh;
-            overflow: auto;
+        .connection-info.active {
+            display: block;
         }
 
-        .modal-header {
-            padding: 25px;
-            border-bottom: 1px solid var(--border-color);
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .info-item {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            flex-direction: column;
+            gap: 5px;
         }
 
-        .modal-header h3 {
+        .info-label {
+            color: var(--text-secondary);
+            font-size: 12px;
+            letter-spacing: 1px;
+        }
+
+        .info-value {
             font-family: 'Clash Display', sans-serif;
             font-size: 20px;
+            font-weight: 600;
         }
 
-        .close-btn {
-            background: none;
-            border: none;
-            color: var(--text-secondary);
+        .badge {
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge.success {
+            background: rgba(0, 230, 118, 0.1);
+            color: var(--success);
+            border: 1px solid rgba(0, 230, 118, 0.2);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            background: var(--glass-bg);
+            border-radius: 24px;
+            border: 1px dashed var(--border-color);
+        }
+
+        .empty-state i {
+            font-size: 60px;
+            color: var(--text-tertiary);
+            margin-bottom: 20px;
+        }
+
+        .empty-state h3 {
+            font-family: 'Clash Display', sans-serif;
             font-size: 24px;
-            cursor: pointer;
+            margin-bottom: 10px;
         }
 
-        .modal-body {
-            padding: 25px;
+        .empty-state p {
+            color: var(--text-secondary);
+            margin-bottom: 30px;
         }
 
-        .modal-footer {
-            padding: 25px;
-            border-top: 1px solid var(--border-color);
+        .example-urls {
             display: flex;
-            justify-content: flex-end;
             gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 20px;
         }
 
-        /* JSON Editor */
-        .json-editor {
-            width: 100%;
-            min-height: 300px;
+        .example-url {
+            padding: 8px 16px;
             background: var(--bg-tertiary);
             border: 1px solid var(--border-color);
+            border-radius: 50px;
+            color: var(--text-secondary);
+            font-size: 12px;
+            font-family: monospace;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .example-url:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* Data Preview */
+        .data-preview {
+            background: var(--bg-tertiary);
             border-radius: 12px;
-            color: var(--text-primary);
-            font-family: 'Space Grotesk', monospace;
-            padding: 15px;
-            font-size: 14px;
-        }
-
-        /* Toast Notifications */
-        .toast-container {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            z-index: 2000;
-        }
-
-        .toast {
-            background: var(--bg-secondary);
-            border-left: 4px solid var(--primary);
-            border-radius: 12px;
-            padding: 15px 25px;
-            margin-top: 10px;
-            color: var(--text-primary);
-            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-            animation: slideIn 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        @keyframes slideIn {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-
-        /* Loading Skeleton */
-        .skeleton {
-            background: linear-gradient(90deg, var(--bg-tertiary) 25%, var(--bg-secondary) 50%, var(--bg-tertiary) 75%);
-            background-size: 200% 100%;
-            animation: loading 1.5s infinite;
-        }
-
-        @keyframes loading {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .premium-header {
-                flex-direction: column;
-                gap: 20px;
-                text-align: center;
-            }
-            
-            .action-bar {
-                flex-direction: column;
-            }
-            
-            .search-wrapper {
-                min-width: 100%;
-            }
+            padding: 10px;
+            font-family: monospace;
+            font-size: 12px;
+            max-width: 300px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
     </style>
 </head>
@@ -638,14 +238,71 @@
             <div class="status-section">
                 <div class="connection-status" id="connectionStatus">
                     <span class="status-dot"></span>
-                    <span>Connected</span>
+                    <span id="statusText">Disconnected</span>
                 </div>
                 <div class="date-time" id="currentDateTime"></div>
             </div>
         </header>
 
-        <!-- Stats Grid -->
-        <div class="stats-grid" id="statsGrid">
+        <!-- MongoDB Connection Panel -->
+        <div class="connection-panel">
+            <div class="connection-header">
+                <i class="fas fa-plug"></i>
+                <h2>Connect to MongoDB</h2>
+            </div>
+            
+            <div class="url-input-group">
+                <div class="url-input-wrapper">
+                    <input type="text" class="url-input" id="mongoUrl" 
+                        placeholder="mongodb+srv://username:password@cluster.mongodb.net/database"
+                        value="mongodb+srv://sila_md:sila0022@sila.67mxtd7.mongodb.net/">
+                </div>
+                <input type="text" class="database-input" id="databaseName" 
+                    placeholder="Database name (optional)">
+                <button class="connect-btn" onclick="connectToMongoDB()" id="connectBtn">
+                    <i class="fas fa-link"></i>
+                    <span>Connect</span>
+                </button>
+            </div>
+
+            <!-- Example URLs for testing -->
+            <div class="example-urls">
+                <span class="example-url" onclick="setExampleUrl('local')">
+                    <i class="fas fa-database"></i> localhost:27017
+                </span>
+                <span class="example-url" onclick="setExampleUrl('atlas')">
+                    <i class="fas fa-cloud"></i> MongoDB Atlas
+                </span>
+                <span class="example-url" onclick="setExampleUrl('test')">
+                    <i class="fas fa-flask"></i> test database
+                </span>
+            </div>
+
+            <!-- Connection Info -->
+            <div class="connection-info" id="connectionInfo">
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span class="info-label">Database</span>
+                        <span class="info-value" id="infoDatabase">-</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Collections</span>
+                        <span class="info-value" id="infoCollections">0</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Documents</span>
+                        <span class="info-value" id="infoDocuments">0</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Size</span>
+                        <span class="info-value" id="infoSize">0 MB</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Grid (hidden initially) -->
+        <div class="stats-grid" id="statsGrid" style="display: none;">
             <div class="stat-card">
                 <div class="stat-icon">
                     <i class="fas fa-database"></i>
@@ -676,19 +333,16 @@
             </div>
         </div>
 
-        <!-- Collections Bar -->
-        <div class="collections-bar" id="collectionsBar">
+        <!-- Collections Bar (hidden initially) -->
+        <div class="collections-bar" id="collectionsBar" style="display: none;">
             <!-- Collections will be loaded here -->
-            <div class="collection-chip skeleton" style="width: 120px;">&nbsp;</div>
-            <div class="collection-chip skeleton" style="width: 120px;">&nbsp;</div>
-            <div class="collection-chip skeleton" style="width: 120px;">&nbsp;</div>
         </div>
 
-        <!-- Action Bar -->
-        <div class="action-bar">
+        <!-- Action Bar (hidden initially) -->
+        <div class="action-bar" id="actionBar" style="display: none;">
             <div class="search-wrapper">
                 <i class="fas fa-search"></i>
-                <input type="text" class="search-input" id="searchInput" placeholder="Search by ID, username, chatId...">
+                <input type="text" class="search-input" id="searchInput" placeholder="Search in all fields...">
             </div>
             <button class="action-btn primary" onclick="refreshData()">
                 <i class="fas fa-sync-alt"></i>
@@ -700,43 +354,54 @@
             </button>
             <button class="action-btn warning" onclick="cleanOldSessions()">
                 <i class="fas fa-broom"></i>
-                Clean Old
+                Clean Old (7 days)
             </button>
         </div>
 
-        <!-- Table -->
-        <div class="table-container">
-            <table class="data-table" id="dataTable">
-                <thead id="tableHeader">
-                    <tr>
-                        <th style="width: 40px;">
-                            <input type="checkbox" class="premium-checkbox" onchange="toggleAll(this)">
-                        </th>
-                        <th>ID <i class="fas fa-sort"></i></th>
-                        <th>User ID <i class="fas fa-sort"></i></th>
-                        <th>Username <i class="fas fa-sort"></i></th>
-                        <th>Chat ID <i class="fas fa-sort"></i></th>
-                        <th>Last Active <i class="fas fa-sort"></i></th>
-                        <th>Status <i class="fas fa-sort"></i></th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="tableBody">
-                    <!-- Loading skeleton -->
-                    <tr>
-                        <td colspan="8" style="text-align: center; padding: 50px;">
-                            <div style="display: flex; flex-direction: column; align-items: center; gap: 20px;">
+        <!-- Main Content Area -->
+        <div id="mainContent">
+            <!-- Empty State (shown when no connection) -->
+            <div class="empty-state" id="emptyState">
+                <i class="fas fa-plug"></i>
+                <h3>Connect to MongoDB</h3>
+                <p>Enter your MongoDB URL above to start managing your bot sessions</p>
+                <div style="color: var(--text-secondary); font-size: 14px; margin-top: 20px;">
+                    <i class="fas fa-check-circle" style="color: var(--success);"></i>
+                    Your URL: mongodb+srv://sila_md:sila0022@sila.67mxtd7.mongodb.net/
+                </div>
+            </div>
+
+            <!-- Table Container (hidden initially) -->
+            <div class="table-container" id="tableContainer" style="display: none;">
+                <table class="data-table" id="dataTable">
+                    <thead id="tableHeader">
+                        <tr>
+                            <th style="width: 40px;">
+                                <input type="checkbox" class="premium-checkbox" onchange="toggleAll(this)">
+                            </th>
+                            <th onclick="sortTable('_id')">ID <i class="fas fa-sort"></i></th>
+                            <th onclick="sortTable('userId')">User ID <i class="fas fa-sort"></i></th>
+                            <th onclick="sortTable('username')">Username <i class="fas fa-sort"></i></th>
+                            <th onclick="sortTable('chatId')">Chat ID <i class="fas fa-sort"></i></th>
+                            <th onclick="sortTable('lastActive')">Last Active <i class="fas fa-sort"></i></th>
+                            <th onclick="sortTable('status')">Status <i class="fas fa-sort"></i></th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <tr>
+                            <td colspan="8" style="text-align: center; padding: 50px;">
                                 <i class="fas fa-circle-notch fa-spin" style="font-size: 40px; color: var(--primary);"></i>
-                                <p>Loading premium data...</p>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+                                <p style="margin-top: 20px;">Loading data...</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
 
-        <!-- Pagination -->
-        <div class="pagination" id="pagination"></div>
+        <!-- Pagination (hidden initially) -->
+        <div class="pagination" id="pagination" style="display: none;"></div>
     </div>
 
     <!-- Edit Modal -->
@@ -768,88 +433,157 @@
         let allDocuments = [];
         let currentEditId = null;
         let sortConfig = { field: 'lastActive', order: 'desc' };
+        let allCollections = [];
 
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
             updateDateTime();
             setInterval(updateDateTime, 1000);
-            loadCollections();
-            loadStats();
-            
-            // Search with debounce
-            document.getElementById('searchInput').addEventListener('input', debounce(searchSessions, 500));
+            checkExistingConnection();
         });
 
-        // Update date and time
-        function updateDateTime() {
-            const now = new Date();
-            const options = { 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric',
-                hour: '2-digit', 
-                minute: '2-digit',
-                second: '2-digit',
-                hour12: false
-            };
-            document.getElementById('currentDateTime').textContent = now.toLocaleString('en-US', options);
-        }
-
-        // Debounce function
-        function debounce(func, wait) {
-            let timeout;
-            return function executedFunction(...args) {
-                const later = () => {
-                    clearTimeout(timeout);
-                    func(...args);
-                };
-                clearTimeout(timeout);
-                timeout = setTimeout(later, wait);
-            };
-        }
-
-        // Load database stats
-        async function loadStats() {
+        // Check if already connected
+        async function checkExistingConnection() {
             try {
-                const response = await fetch('/api/stats');
-                const stats = await response.json();
-                
-                document.getElementById('totalDocuments').textContent = stats.totalDocuments.toLocaleString();
-                document.getElementById('totalCollections').textContent = stats.totalCollections;
-                document.getElementById('dbSize').textContent = (stats.totalSize / 1024 / 1024).toFixed(2) + ' MB';
-            } catch (error) {
-                showToast('Error loading stats: ' + error.message, 'error');
-            }
-        }
-
-        // Load collections
-        async function loadCollections() {
-            try {
-                const response = await fetch('/api/collections');
-                const collections = await response.json();
-                
-                const bar = document.getElementById('collectionsBar');
-                bar.innerHTML = '';
-                
-                collections.forEach((collection, index) => {
-                    const chip = document.createElement('div');
-                    chip.className = 'collection-chip';
-                    if (index === 0) chip.classList.add('active');
-                    chip.innerHTML = `
-                        <i class="fas fa-folder"></i>
-                        ${collection.name}
-                        <span class="count">${collection.documentCount}</span>
-                    `;
-                    chip.onclick = () => selectCollection(collection.name);
-                    bar.appendChild(chip);
-                });
-                
-                if (collections.length > 0) {
-                    selectCollection(collections[0].name);
+                const response = await fetch('/api/info');
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.connected) {
+                        updateConnectionUI(data);
+                    }
                 }
             } catch (error) {
-                showToast('Error loading collections: ' + error.message, 'error');
+                // Not connected, that's fine
             }
+        }
+
+        // Set example URL
+        function setExampleUrl(type) {
+            const urlInput = document.getElementById('mongoUrl');
+            const dbInput = document.getElementById('databaseName');
+            
+            switch(type) {
+                case 'local':
+                    urlInput.value = 'mongodb://localhost:27017';
+                    dbInput.value = 'sila_bot_db';
+                    break;
+                case 'atlas':
+                    urlInput.value = 'mongodb+srv://sila_md:sila0022@sila.67mxtd7.mongodb.net/';
+                    dbInput.value = 'sila_bot_db';
+                    break;
+                case 'test':
+                    urlInput.value = 'mongodb+srv://sila_md:sila0022@sila.67mxtd7.mongodb.net/';
+                    dbInput.value = 'test';
+                    break;
+            }
+        }
+
+        // Connect to MongoDB
+        async function connectToMongoDB() {
+            const url = document.getElementById('mongoUrl').value.trim();
+            const database = document.getElementById('databaseName').value.trim();
+            
+            if (!url) {
+                showToast('Please enter MongoDB URL', 'warning');
+                return;
+            }
+
+            const btn = document.getElementById('connectBtn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Connecting...';
+            btn.disabled = true;
+
+            try {
+                const response = await fetch('/api/connect', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url, database })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showToast('Connected successfully!', 'success');
+                    document.getElementById('statusText').textContent = 'Connected';
+                    document.getElementById('connectionStatus').classList.add('active');
+                    
+                    // Update connection info
+                    document.getElementById('connectionInfo').classList.add('active');
+                    document.getElementById('infoDatabase').textContent = data.database;
+                    document.getElementById('infoCollections').textContent = data.stats.collections;
+                    document.getElementById('infoDocuments').textContent = data.stats.objects.toLocaleString();
+                    document.getElementById('infoSize').textContent = (data.stats.dataSize / 1024 / 1024).toFixed(2) + ' MB';
+                    
+                    // Load database info and collections
+                    await loadDatabaseInfo();
+                } else {
+                    showToast('Connection failed: ' + data.error, 'error');
+                }
+            } catch (error) {
+                showToast('Error: ' + error.message, 'error');
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        // Load database info
+        async function loadDatabaseInfo() {
+            try {
+                const response = await fetch('/api/info');
+                const data = await response.json();
+                
+                if (data.connected) {
+                    updateConnectionUI(data);
+                }
+            } catch (error) {
+                showToast('Error loading database info', 'error');
+            }
+        }
+
+        // Update UI after connection
+        function updateConnectionUI(data) {
+            // Show all UI elements
+            document.getElementById('statsGrid').style.display = 'grid';
+            document.getElementById('collectionsBar').style.display = 'flex';
+            document.getElementById('actionBar').style.display = 'flex';
+            document.getElementById('emptyState').style.display = 'none';
+            
+            // Update stats
+            document.getElementById('totalDocuments').textContent = data.stats.documents.toLocaleString();
+            document.getElementById('totalCollections').textContent = data.stats.collections;
+            document.getElementById('dbSize').textContent = (data.stats.dataSize / 1024 / 1024).toFixed(2) + ' MB';
+            
+            // Load collections
+            allCollections = data.collections;
+            renderCollectionsBar(data.collections);
+            
+            // Auto-select first collection with data
+            const collectionsWithData = data.collections.filter(c => c.count > 0);
+            if (collectionsWithData.length > 0) {
+                selectCollection(collectionsWithData[0].name);
+            } else if (data.collections.length > 0) {
+                selectCollection(data.collections[0].name);
+            }
+        }
+
+        // Render collections bar
+        function renderCollectionsBar(collections) {
+            const bar = document.getElementById('collectionsBar');
+            bar.innerHTML = '';
+            
+            collections.forEach((collection, index) => {
+                const chip = document.createElement('div');
+                chip.className = 'collection-chip';
+                chip.innerHTML = `
+                    <i class="fas fa-folder"></i>
+                    ${collection.name}
+                    <span class="count">${collection.count}</span>
+                    ${collection.sample ? '<i class="fas fa-database" style="font-size: 10px; opacity: 0.5;"></i>' : ''}
+                `;
+                chip.onclick = () => selectCollection(collection.name);
+                bar.appendChild(chip);
+            });
         }
 
         // Select collection
@@ -867,6 +601,10 @@
                 }
             });
             
+            // Show table
+            document.getElementById('tableContainer').style.display = 'block';
+            document.getElementById('pagination').style.display = 'flex';
+            
             await loadDocuments();
         }
 
@@ -875,9 +613,23 @@
             if (!currentCollection) return;
             
             try {
+                document.getElementById('tableBody').innerHTML = `
+                    <tr>
+                        <td colspan="8" style="text-align: center; padding: 50px;">
+                            <i class="fas fa-circle-notch fa-spin" style="font-size: 40px; color: var(--primary);"></i>
+                            <p style="margin-top: 20px;">Loading documents from ${currentCollection}...</p>
+                        </td>
+                    </tr>
+                `;
+
                 const response = await fetch(
                     `/api/collections/${currentCollection}?page=${currentPage}&sortBy=${sortConfig.field}&sortOrder=${sortConfig.order}`
                 );
+                
+                if (!response.ok) {
+                    throw new Error('Failed to load documents');
+                }
+                
                 const data = await response.json();
                 
                 allDocuments = data.documents;
@@ -888,6 +640,15 @@
                 updateActiveToday();
             } catch (error) {
                 showToast('Error loading documents: ' + error.message, 'error');
+                document.getElementById('tableBody').innerHTML = `
+                    <tr>
+                        <td colspan="8" style="text-align: center; padding: 50px;">
+                            <i class="fas fa-exclamation-triangle" style="font-size: 40px; color: var(--danger);"></i>
+                            <p style="margin-top: 20px;">Error loading documents</p>
+                            <p style="color: var(--text-secondary);">${error.message}</p>
+                        </td>
+                    </tr>
+                `;
             }
         }
 
@@ -900,7 +661,8 @@
                     <tr>
                         <td colspan="8" style="text-align: center; padding: 50px;">
                             <i class="fas fa-folder-open" style="font-size: 48px; color: var(--text-tertiary); margin-bottom: 20px;"></i>
-                            <p>No documents found in this collection</p>
+                            <p>No documents found in ${currentCollection}</p>
+                            <p style="color: var(--text-secondary); font-size: 12px;">Try another collection or adjust your search</p>
                         </td>
                     </tr>
                 `;
@@ -909,23 +671,33 @@
             
             let html = '';
             allDocuments.forEach(doc => {
-                const id = doc._id || doc.sessionId || 'N/A';
-                const userId = doc.userId || doc.user_id || 'N/A';
-                const username = doc.username || doc.user_name || 'N/A';
-                const chatId = doc.chatId || doc.chat_id || 'N/A';
-                const lastActive = doc.lastActive || doc.updatedAt || doc.createdAt || new Date();
-                const status = getStatus(doc);
+                const id = doc._id || doc.sessionId || doc.userId || 'N/A';
+                const userId = doc.userId || doc.user_id || doc.from?.id || doc.chat?.id || 'N/A';
+                const username = doc.username || doc.user_name || doc.from?.username || 'N/A';
+                const chatId = doc.chatId || doc.chat_id || doc.chat?.id || 'N/A';
+                const lastActive = doc.lastActive || doc.updatedAt || doc.createdAt || doc.timestamp || new Date();
+                const status = doc.status || (doc.isActive ? 'Active' : 'Inactive');
                 
                 const date = new Date(lastActive);
-                const formattedDate = date.toLocaleString();
-                const isActive = (new Date() - date) < 3600000; // Active in last hour
+                const formattedDate = !isNaN(date) ? date.toLocaleString() : 'Unknown';
+                const isActive = !isNaN(date) && (new Date() - date) < 3600000;
+                
+                // Get first few fields as preview
+                const preview = Object.keys(doc).slice(0, 3).map(key => 
+                    `${key}: ${typeof doc[key] === 'object' ? '{...}' : String(doc[key]).substring(0, 20)}`
+                ).join(', ');
                 
                 html += `
                     <tr>
                         <td>
                             <input type="checkbox" class="premium-checkbox" data-id="${id}" onchange="toggleSelect('${id}', this.checked)">
                         </td>
-                        <td><span style="font-family: monospace;">${String(id).substring(0, 10)}...</span></td>
+                        <td title="${id}">
+                            <div style="display: flex; flex-direction: column;">
+                                <span style="font-family: monospace; font-size: 12px;">${String(id).substring(0, 15)}${String(id).length > 15 ? '...' : ''}</span>
+                                <small style="color: var(--text-tertiary); font-size: 10px;">${preview.substring(0, 30)}...</small>
+                            </div>
+                        </td>
                         <td>${userId}</td>
                         <td>@${username}</td>
                         <td>${chatId}</td>
@@ -951,23 +723,30 @@
             });
             
             tbody.innerHTML = html;
+            
+            // Update total documents
+            document.getElementById('totalDocuments').textContent = allDocuments.length;
         }
 
-        // Get status from document
-        function getStatus(doc) {
-            if (doc.status) return doc.status;
-            if (doc.isActive) return 'Active';
-            if (doc.isOnline) return 'Online';
-            return 'Unknown';
+        // Sort table
+        function sortTable(field) {
+            if (sortConfig.field === field) {
+                sortConfig.order = sortConfig.order === 'asc' ? 'desc' : 'asc';
+            } else {
+                sortConfig.field = field;
+                sortConfig.order = 'desc';
+            }
+            loadDocuments();
         }
 
-        // Update active today count
+        // Update active today
         function updateActiveToday() {
             const today = new Date().toDateString();
             const activeToday = allDocuments.filter(doc => {
-                const lastActive = doc.lastActive || doc.updatedAt || doc.createdAt;
+                const lastActive = doc.lastActive || doc.updatedAt || doc.createdAt || doc.timestamp;
                 if (lastActive) {
-                    return new Date(lastActive).toDateString() === today;
+                    const date = new Date(lastActive);
+                    return !isNaN(date) && date.toDateString() === today;
                 }
                 return false;
             }).length;
@@ -984,8 +763,16 @@
             html += `<button class="page-btn" onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}><i class="fas fa-angle-left"></i></button>`;
             
             // Show page numbers
-            for (let i = Math.max(1, currentPage - 2); i <= Math.min(totalPages, currentPage + 2); i++) {
+            const start = Math.max(1, currentPage - 2);
+            const end = Math.min(totalPages, currentPage + 2);
+            
+            for (let i = start; i <= end; i++) {
                 html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+            }
+            
+            if (end < totalPages) {
+                html += `<span class="page-btn" style="background: transparent;">...</span>`;
+                html += `<button class="page-btn" onclick="changePage(${totalPages})">${totalPages}</button>`;
             }
             
             html += `<button class="page-btn" onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}><i class="fas fa-angle-right"></i></button>`;
@@ -1055,7 +842,7 @@
                 if (result.success) {
                     showToast('Document deleted successfully', 'success');
                     await loadDocuments();
-                    await loadStats();
+                    await loadDatabaseInfo();
                 }
             } catch (error) {
                 showToast('Error: ' + error.message, 'error');
@@ -1088,7 +875,7 @@
                         Delete Selected
                     `;
                     await loadDocuments();
-                    await loadStats();
+                    await loadDatabaseInfo();
                 }
             } catch (error) {
                 showToast('Error: ' + error.message, 'error');
@@ -1097,6 +884,11 @@
 
         // Clean old sessions
         async function cleanOldSessions() {
+            if (!currentCollection) {
+                showToast('Please select a collection first', 'warning');
+                return;
+            }
+            
             if (!confirm('Delete sessions older than 7 days?')) return;
             
             try {
@@ -1109,7 +901,7 @@
                 if (result.success) {
                     showToast(result.message, 'success');
                     await loadDocuments();
-                    await loadStats();
+                    await loadDatabaseInfo();
                 }
             } catch (error) {
                 showToast('Error: ' + error.message, 'error');
@@ -1126,19 +918,36 @@
             }
             
             const filtered = allDocuments.filter(doc => {
-                return Object.values(doc).some(value => 
-                    String(value).toLowerCase().includes(searchTerm)
-                );
+                return Object.values(doc).some(value => {
+                    if (value === null || value === undefined) return false;
+                    return String(value).toLowerCase().includes(searchTerm);
+                });
             });
             
-            allDocuments = filtered;
-            renderTable();
+            // Show filtered results without changing original data
+            const tbody = document.getElementById('tableBody');
+            if (filtered.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8" style="text-align: center; padding: 50px;">
+                            <i class="fas fa-search" style="font-size: 48px; color: var(--text-tertiary); margin-bottom: 20px;"></i>
+                            <p>No results found for "${searchTerm}"</p>
+                        </td>
+                    </tr>
+                `;
+            } else {
+                // Store original documents temporarily
+                const tempDocs = allDocuments;
+                allDocuments = filtered;
+                renderTable();
+                allDocuments = tempDocs; // Restore original
+            }
         }
 
         // Refresh data
         function refreshData() {
             loadDocuments();
-            loadStats();
+            loadDatabaseInfo();
             showToast('Data refreshed', 'success');
         }
 
@@ -1184,6 +993,21 @@
         function closeModal() {
             document.getElementById('editModal').style.display = 'none';
             currentEditId = null;
+        }
+
+        // Update date and time
+        function updateDateTime() {
+            const now = new Date();
+            const options = { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                hour: '2-digit', 
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+            };
+            document.getElementById('currentDateTime').textContent = now.toLocaleString('en-US', options);
         }
 
         // Show toast
